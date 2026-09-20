@@ -1,3 +1,4 @@
+import { nextMonthStart } from "./payments";
 import type { Payment, Player } from "./types";
 
 export type DashboardStats = {
@@ -54,5 +55,38 @@ export function computeMonthlyCollections(
       (payment) => payment.mois === mois,
     ).length;
     return { mois, paidCount, collected: paidCount * montantMensuel };
+  });
+}
+
+export type MonthlyComparison = {
+  mois: string;
+  registeredCount: number;
+  paidCount: number;
+  unpaidCount: number;
+};
+
+// Comparaison payés/en attente mois par mois. `registeredCount` ne compte
+// que les enfants déjà inscrits à ce moment-là (via `created_at`) — pas
+// l'effectif actuel, pour ne pas compter un enfant comme "en attente" sur
+// des mois antérieurs à son inscription.
+export function computeMonthlyComparison(
+  players: Player[],
+  allPayments: Payment[],
+  months: string[],
+): MonthlyComparison[] {
+  return months.map((mois) => {
+    const cutoff = nextMonthStart(mois);
+    const registeredCount = players.filter(
+      (player) => player.created_at < cutoff,
+    ).length;
+    const paidCount = allPayments.filter(
+      (payment) => payment.mois === mois,
+    ).length;
+    return {
+      mois,
+      registeredCount,
+      paidCount,
+      unpaidCount: Math.max(registeredCount - paidCount, 0),
+    };
   });
 }

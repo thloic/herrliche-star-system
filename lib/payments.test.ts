@@ -12,6 +12,7 @@ import {
   formatShortAmount,
   isPaidForMonth,
   lastNMonths,
+  nextMonthStart,
   normalizeMonthInput,
   shortMonthLabel,
   todayISO,
@@ -210,5 +211,15 @@ describe("lastNMonths", () => {
       "2026-01-01",
       "2026-02-01",
     ]);
+  });
+});
+
+describe("nextMonthStart", () => {
+  it("renvoie le 1er du mois suivant", () => {
+    expect(nextMonthStart("2026-09-01")).toBe("2026-10-01");
+  });
+
+  it("traverse correctement un changement d'année", () => {
+    expect(nextMonthStart("2026-12-01")).toBe("2027-01-01");
   });
 });

@@ -74,6 +74,15 @@ export function lastNMonths(n: number, from: Date = new Date()): string[] {
   return months;
 }
 
+// Premier jour du mois suivant — sert à savoir si un joueur était déjà
+// inscrit pendant un mois donné (created_at < nextMonthStart(mois)).
+export function nextMonthStart(monthISO: string): string {
+  const [year, month] = monthISO.split("-").map(Number);
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  return `${nextYear}-${String(nextMonth).padStart(2, "0")}-01`;
+}
+
 // Normalise une saisie <input type="month"> ("YYYY-MM") ou une date complète
 // ("YYYY-MM-DD") vers le format stocké en base : toujours le 1er du mois.
 export function normalizeMonthInput(value: string): string {

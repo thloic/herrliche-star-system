@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { computeDashboardStats, computeMonthlyCollections } from "@/lib/dashboard";
+import {
+  computeDashboardStats,
+  computeMonthlyCollections,
+  computeMonthlyComparison,
+} from "@/lib/dashboard";
 import { initials } from "@/lib/players";
 import {
   currentMonthStart,
@@ -12,6 +16,7 @@ import type { Payment, Player, Settings } from "@/lib/types";
 import { StatusTag } from "../joueurs/StatusTag";
 import { AnimatedGrid } from "./AnimatedGrid";
 import { MonthlyChart } from "./MonthlyChart";
+import { MonthlyComparisonChart } from "./MonthlyComparisonChart";
 import { MonthSelector } from "./MonthSelector";
 
 const CHART_MONTHS = 12;
@@ -65,6 +70,11 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
     months,
     montantMensuel,
   );
+  const monthlyComparison = computeMonthlyComparison(
+    players,
+    chartPayments,
+    months,
+  );
 
   return (
     <div className="-mx-4 -mt-4 flex flex-col gap-6">
@@ -115,8 +125,9 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
         </AnimatedGrid>
       </div>
 
-      <div className="px-4">
+      <div className="flex flex-col gap-4 px-4">
         <MonthlyChart data={monthlyCollections} />
+        <MonthlyComparisonChart data={monthlyComparison} />
       </div>
 
       <div className="px-4 pb-2">

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { computeDashboardStats, computeMonthlyCollections } from "./dashboard";
+import {
+  computeDashboardStats,
+  computeMonthlyCollections,
+  computeMonthlyComparison,
+} from "./dashboard";
 import type { Payment, Player } from "./types";
 
 function player(overrides: Partial<Player> = {}): Player {
@@ -106,5 +110,43 @@ describe("computeMonthlyCollections", () => {
 
   it("renvoie un tableau vide pour une liste de mois vide", () => {
     expect(computeMonthlyCollections([], [], 5000)).toEqual([]);
+  });
+});
+
+describe("computeMonthlyComparison", () => {
+  it("compare payés/en attente par mois, en excluant les enfants pas encore inscrits", () => {
+    const players = [
+      player({ id: "p1", created_at: "2026-06-01T00:00:00.000Z" }),
+      // p2 inscrit seulement en août : ne doit pas compter comme "en attente" en juillet.
+      player({ id: "p2", created_at: "2026-08-15T00:00:00.000Z" }),
+    ];
+    const payments = [
+      payment({ player_id: "p1", mois: "2026-07-01" }),
+      payment({ player_id: "p1", mois: "2026-08-01" }),
+    ];
+
+    const result = computeMonthlyComparison(
+      players,
+      payments,
+      ["2026-07-01", "2026-08-01"],
+    );
+
+    expect(result).toEqual([
+      { mois: "2026-07-01", registeredCount: 1, paidCount: 1, unpaidCount: 0 },
+      { mois: "2026-08-01", registeredCount: 2, paidCount: 1, unpaidCount: 1 },
+    ]);
+  });
+
+  it("ne renvoie jamais un compte en attente négatif", () => {
+    const players = [player({ id: "p1", created_at: "2026-06-01T00:00:00.000Z" })];
+    // Paiement orphelin (joueur supprimé depuis) : ne doit pas rendre unpaidCount négatif.
+    const payments = [
+      payment({ player_id: "p1", mois: "2026-07-01" }),
+      payment({ player_id: "orphelin", mois: "2026-07-01" }),
+    ];
+
+    const result = computeMonthlyComparison(players, payments, ["2026-07-01"]);
+
+    expect(result[0].unpaidCount).toBe(0);
   });
 });

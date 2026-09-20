@@ -4,6 +4,7 @@ import { getThemeInitScript } from "@/lib/theme";
 import { ThemeProvider } from "./ThemeProvider";
 import { ToasterWithTheme } from "./ToasterWithTheme";
 import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
+import { InstallPrompt } from "./InstallPrompt";
 import "./globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -53,6 +54,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           <ToasterWithTheme />
           <ServiceWorkerRegister />
+          <InstallPrompt />
         </ThemeProvider>
       </body>
     </html>
