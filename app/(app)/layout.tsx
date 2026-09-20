@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { LayoutDashboard, LogOut, Settings, Users } from "lucide-react";
+import { LayoutDashboard, Settings, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { DEVICE_ID_COOKIE, UNLOCK_COOKIE } from "@/lib/pin";
-import { logout } from "./actions";
 import { PinUnlockScreen } from "./PinUnlockScreen";
+import { LogoutButton } from "./LogoutButton";
 
 export default async function AppLayout({
   children,
@@ -56,15 +56,7 @@ export default async function AppLayout({
       <header className="border-b border-gray-200 dark:border-gray-800">
         <div className="mx-auto flex w-full max-w-[480px] items-center justify-between px-4 py-3">
           <span className="font-semibold">Herrliche Stars</span>
-          <form action={logout}>
-            <button
-              type="submit"
-              aria-label="Se déconnecter"
-              className="text-gray-500 transition-colors hover:text-brand dark:text-gray-400 dark:hover:text-brand-light"
-            >
-              <LogOut size={20} aria-hidden />
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </header>
       <main className="mx-auto w-full max-w-[480px] flex-1 px-4 py-4 pb-24">
