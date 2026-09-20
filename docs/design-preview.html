@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Herrliche Stars — Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand: #1b2a6b;
+    --brand-dark: #12204f;
+    --accent: #ff6b1a;
+    --accent-dark: #e85a0a;
+    --n-50: #f7f8fb;
+    --n-100: #eef0f6;
+    --n-300: #d8dce8;
+    --n-500: #6b7280;
+    --n-900: #14181f;
+    --success: #16a34a;
+    --success-bg: #e9f9ef;
+    --warning: #f59e0b;
+    --warning-bg: #fef4e6;
+    --error: #dc2626;
+    --error-bg: #fdecec;
+    --info: #2563eb;
+    --r-sm: 8px;
+    --r-md: 12px;
+    --r-lg: 20px;
+    --r-full: 9999px;
+    --sp-2xs: 2px; --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px;
+    --sp-lg: 24px; --sp-xl: 32px; --sp-2xl: 48px; --sp-3xl: 64px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--n-100);
+    color: var(--n-900);
+    font-family: "Plus Jakarta Sans", sans-serif;
+    padding: var(--sp-2xl) var(--sp-md) var(--sp-3xl);
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: var(--sp-3xl); }
+  section { background: #fff; border-radius: var(--r-lg); padding: var(--sp-xl); border: 1px solid var(--n-300); }
+  h2.section-title { font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--n-500); font-weight: 700; margin: 0 0 var(--sp-lg); }
+
+  /* --- Section 1 : specimen typo --- */
+  .hero-name { font-weight: 800; font-size: 56px; line-height: 1.05; color: var(--brand); margin: 0 0 var(--sp-sm); }
+  .hero-tag { font-weight: 600; color: var(--accent); margin: 0 0 var(--sp-xl); }
+  .body-sample { max-width: 60ch; color: var(--n-900); font-size: 16px; line-height: 1.6; margin: 0 0 var(--sp-xl); }
+  .type-row { display: flex; gap: var(--sp-xl); flex-wrap: wrap; margin-bottom: var(--sp-xl); }
+  .type-swatch { font-weight: 800; }
+  table.data-sample { border-collapse: collapse; font-family: "JetBrains Mono", monospace; font-size: 14px; width: 100%; max-width: 420px; }
+  table.data-sample th { text-align: left; color: var(--n-500); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 12px; border-bottom: 1px solid var(--n-300); }
+  table.data-sample td { padding: 10px 12px; border-bottom: 1px solid var(--n-100); font-variant-numeric: tabular-nums; }
+  code.code-sample { display: block; background: var(--n-900); color: #e6f0ff; font-family: "JetBrains Mono", monospace; font-size: 13px; padding: var(--sp-md); border-radius: var(--r-md); white-space: pre; overflow-x: auto; }
+
+  /* --- Section 2 : palette + composants --- */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: var(--sp-md); margin-bottom: var(--sp-xl); }
+  .swatch { border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--n-300); }
+  .swatch .fill { height: 64px; }
+  .swatch .label { padding: 8px 10px; font-size: 12px; font-family: "JetBrains Mono", monospace; background: #fff; }
+  .swatch .label b { display: block; font-family: "Plus Jakarta Sans", sans-serif; font-size: 13px; margin-bottom: 2px; }
+
+  .comp-row { display: flex; gap: var(--sp-md); flex-wrap: wrap; align-items: center; margin-bottom: var(--sp-xl); }
+  .btn { font-family: inherit; font-weight: 700; font-size: 15px; padding: 13px 22px; border-radius: var(--r-full); border: none; cursor: pointer; transition: transform 150ms ease-out, box-shadow 150ms ease-out; }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 6px 16px rgba(27,42,107,0.25); }
+  .btn-primary:hover { background: var(--brand-dark); }
+  .btn-accent { background: var(--accent); color: #fff; box-shadow: 0 6px 16px rgba(255,107,26,0.3); }
+  .btn-accent:hover { background: var(--accent-dark); }
+  .btn-ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--n-300); }
+  .btn-ghost:hover { border-color: var(--brand); }
+
+  .field { display: flex; flex-direction: column; gap: 6px; width: 220px; }
+  .field label { font-size: 13px; font-weight: 600; color: var(--n-900); }
+  .field input { font-family: inherit; font-size: 15px; padding: 12px 14px; border-radius: var(--r-sm); border: 1.5px solid var(--n-300); outline: none; }
+  .field input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(27,42,107,0.12); }
+  .field.error input { border-color: var(--error); }
+  .field.error .hint { color: var(--error); font-size: 12px; }
+
+  .alert { padding: 12px 16px; border-radius: var(--r-md); font-size: 14px; font-weight: 600; display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .alert-success { background: var(--success-bg); color: var(--success); }
+  .alert-warning { background: var(--warning-bg); color: #92610a; }
+  .alert-error { background: var(--error-bg); color: var(--error); }
+  .alert-info { background: #eaf1ff; color: var(--info); }
+
+  .card-demo { border: 1px solid var(--n-300); border-radius: var(--r-md); padding: var(--sp-md); max-width: 280px; }
+  .card-demo b { display: block; margin-bottom: 4px; }
+  .card-demo span { color: var(--n-500); font-size: 13px; }
+
+  /* --- Section 3 : mockup dashboard mobile --- */
+  .phone { width: 380px; margin: 0 auto; border-radius: 32px; border: 10px solid var(--n-900); overflow: hidden; background: var(--n-50); box-shadow: 0 20px 50px rgba(0,0,0,0.18); }
+  .phone-header { background: var(--brand); color: #fff; padding: 20px 20px 28px; position: relative; overflow: hidden; }
+  .phone-header::after {
+    content: ""; position: absolute; right: -30px; bottom: -60px; width: 160px; height: 160px;
+    border: 3px solid rgba(255,255,255,0.18); border-radius: 50%;
+  }
+  .phone-header .row { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+  .phone-header .club { font-weight: 800; font-size: 17px; }
+  .avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+  .phone-header h3 { margin: 18px 0 0; font-size: 22px; font-weight: 800; position: relative; z-index: 1; }
+  .phone-header p { margin: 4px 0 0; color: rgba(255,255,255,0.7); font-size: 13px; position: relative; z-index: 1; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; margin-top: -18px; position: relative; z-index: 2; }
+  .stat-card { background: #fff; border-radius: var(--r-md); padding: 14px; box-shadow: 0 8px 20px rgba(20,24,31,0.08); }
+  .stat-card .num { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 22px; }
+  .stat-card .lbl { font-size: 12px; color: var(--n-500); margin-top: 2px; }
+  .stat-card.accent .num { color: var(--accent); }
+  .stat-card.brand .num { color: var(--brand); }
+
+  .list-section { padding: 4px 16px 16px; }
+  .list-title { font-size: 13px; font-weight: 700; color: var(--n-500); text-transform: uppercase; letter-spacing: 0.04em; margin: 10px 0 8px; }
+  .player-row { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: var(--r-md); padding: 10px 12px; margin-bottom: 8px; border: 1px solid var(--n-300); }
+  .player-row .ph-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--n-100); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--brand); font-size: 13px; }
+  .player-row .info { flex: 1; }
+  .player-row .info b { display: block; font-size: 14px; }
+  .player-row .info span { font-size: 12px; color: var(--n-500); font-family: "JetBrains Mono", monospace; }
+  .badge { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: var(--r-full); }
+  .badge.late { background: var(--error-bg); color: var(--error); }
+  .badge.paid { background: var(--success-bg); color: var(--success); }
+
+  .bottom-nav { display: flex; justify-content: space-around; padding: 10px 0 14px; background: #fff; border-top: 1px solid var(--n-300); }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; color: var(--n-500); font-weight: 600; }
+  .nav-item.active { color: var(--brand); }
+  .nav-dot { width: 20px; height: 20px; border-radius: 6px; background: currentColor; opacity: 0.15; }
+  .nav-item.active .nav-dot { opacity: 1; background: var(--brand); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section>
+    <h2 class="section-title">01 — Spécimen typographique</h2>
+    <p class="hero-name">Herrliche Stars</p>
+    <p class="hero-tag">Plus Jakarta Sans · ExtraBold 800 · Display/Hero</p>
+    <p class="body-sample">
+      Chaque mois, le coach enregistre les paiements des familles et suit qui
+      est à jour. L'objectif : que tout se lise d'un coup d'œil, même après
+      l'entraînement, sur un téléphone d'entrée de gamme et une connexion pas
+      toujours stable à Lomé.
+    </p>
+    <div class="type-row">
+      <span class="type-swatch" style="font-size:28px;">Aa Bb Cc — 800</span>
+      <span class="type-swatch" style="font-size:20px; font-weight:600;">Aa Bb Cc — 600</span>
+      <span class="type-swatch" style="font-size:16px; font-weight:400;">Aa Bb Cc — 400 (body)</span>
+    </div>
+    <table class="data-sample">
+      <thead><tr><th>Joueur</th><th>Mois</th><th>Montant</th></tr></thead>
+      <tbody>
+        <tr><td>AGBETOKA K.</td><td>09/2026</td><td>5 000 F</td></tr>
+        <tr><td>DOSSEH A.</td><td>09/2026</td><td>5 000 F</td></tr>
+        <tr><td>KONE M.</td><td>08/2026</td><td>5 000 F</td></tr>
+      </tbody>
+    </table>
+    <br />
+    <code class="code-sample">// lib/payments.ts
+export function statutDuMois(joueur: Player, mois: string) {
+  return joueur.paiements.some(p => p.mois === mois) ? "payé" : "en attente";
+}</code>
+  </section>
+
+  <section>
+    <h2 class="section-title">02 — Palette &amp; composants</h2>
+    <div class="swatches">
+      <div class="swatch"><div class="fill" style="background:var(--brand)"></div><div class="label"><b>Bleu Herrliche</b>#1B2A6B</div></div>
+      <div class="swatch"><div class="fill" style="background:var(--accent)"></div><div class="label"><b>Orange Terrain</b>#FF6B1A</div></div>
+      <div class="swatch"><div class="fill" style="background:var(--n-900)"></div><div class="label"><b>Encre</b>#14181F</div></div>
+      <div class="swatch"><div class="fill" style="background:var(--n-100)"></div><div class="label"><b>Neutre clair</b>#EEF0F6</div></div>
+      <div class="swatch"><div class="fill" style="background:var(--success)"></div><div class="label"><b>Payé</b>#16A34A</div></div>
+      <div class="swatch"><div class="fill" style="background:var(--error)"></div><div class="label"><b>En retard</b>#DC2626</div></div>
+    </div>
+
+    <div class="comp-row">
+      <button class="btn btn-primary">Enregistrer</button>
+      <button class="btn btn-accent">Marquer payé</button>
+      <button class="btn btn-ghost">Annuler</button>
+    </div>
+
+    <div class="comp-row">
+      <div class="field">
+        <label>Nom et prénom</label>
+        <input placeholder="AGBETOKA Kodjo" />
+      </div>
+      <div class="field">
+        <label>Email (focus)</label>
+        <input placeholder="focus…" autofocus />
+      </div>
+      <div class="field error">
+        <label>Téléphone parent</label>
+        <input placeholder="requis" />
+        <span class="hint">Ce champ est requis.</span>
+      </div>
+    </div>
+
+    <div style="max-width:420px; margin-bottom: var(--sp-xl);">
+      <div class="alert alert-success">✓ Paiement enregistré pour AGBETOKA Kodjo.</div>
+      <div class="alert alert-warning">⚠ 3 enfants n'ont pas encore payé ce mois.</div>
+      <div class="alert alert-error">✕ Erreur lors de l'envoi de la photo.</div>
+      <div class="alert alert-info">ℹ Le montant mensuel est de 5 000 F CFA.</div>
+    </div>
+
+    <div class="card-demo">
+      <b>AGBETOKA Kodjo Kevin</b>
+      <span>Lomé · Inscrit le 12/05/2024</span>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">03 — Mockup : dashboard (mobile)</h2>
+    <div class="phone">
+      <div class="phone-header">
+        <div class="row">
+          <span class="club">Herrliche Stars</span>
+          <span class="avatar">C</span>
+        </div>
+        <h3>Bonjour, Coach 👋</h3>
+        <p>Septembre 2026 — voici où en est l'équipe.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card brand"><div class="num">24</div><div class="lbl">Enfants inscrits</div></div>
+        <div class="stat-card accent"><div class="num">18</div><div class="lbl">Payés ce mois</div></div>
+        <div class="stat-card"><div class="num" style="color:var(--error)">6</div><div class="lbl">En attente</div></div>
+        <div class="stat-card"><div class="num">90 000 F</div><div class="lbl">Collecté / 120 000 F</div></div>
+      </div>
+      <div class="list-section">
+        <div class="list-title">À relancer</div>
+        <div class="player-row">
+          <div class="ph-avatar">AK</div>
+          <div class="info"><b>AGBETOKA Kevin</b><span>90 87 52 43</span></div>
+          <span class="badge late">En retard</span>
+        </div>
+        <div class="player-row">
+          <div class="ph-avatar">DA</div>
+          <div class="info"><b>DOSSEH Ama</b><span>90 00 00 00</span></div>
+          <span class="badge late">En retard</span>
+        </div>
+        <div class="player-row">
+          <div class="ph-avatar">KM</div>
+          <div class="info"><b>KONE Malik</b><span>91 22 33 44</span></div>
+          <span class="badge paid">Payé</span>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <div class="nav-item active"><div class="nav-dot"></div>Accueil</div>
+        <div class="nav-item"><div class="nav-dot"></div>Joueurs</div>
+        <div class="nav-item"><div class="nav-dot"></div>Réglages</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
