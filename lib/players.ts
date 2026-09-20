@@ -44,6 +44,15 @@ export async function uploadPlayerPhoto(
   return { path, error: null };
 }
 
+export async function deletePlayerPhoto(
+  supabase: SupabaseClient,
+  photoPath: string,
+): Promise<void> {
+  // Best-effort : si ça échoue, on ne bloque pas la suppression du joueur
+  // pour un fichier orphelin dans le storage.
+  await supabase.storage.from(BUCKET).remove([photoPath]);
+}
+
 export function initials(nomPrenom: string): string {
   return nomPrenom
     .split(" ")

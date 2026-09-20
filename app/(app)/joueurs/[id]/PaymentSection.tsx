@@ -2,14 +2,16 @@
 
 import { useActionState, useEffect, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Clock, TriangleAlert } from "lucide-react";
 import { toast } from "sonner";
 import type { Payment } from "@/lib/types";
 import {
   formatAmount,
   formatDate,
+  formatDueStatus,
   formatMonthLabel,
   todayISO,
+  type DueStatus,
 } from "@/lib/payments";
 import { markPaid, type MarkPaidState } from "./actions";
 
@@ -43,12 +45,14 @@ export function PaymentSection({
   playerId,
   currentMonthISO,
   currentPayment,
+  dueStatus,
   montantMensuel,
   history,
 }: {
   playerId: string;
   currentMonthISO: string;
   currentPayment?: Payment;
+  dueStatus: DueStatus | null;
   montantMensuel: number;
   history: Payment[];
 }) {
@@ -66,12 +70,12 @@ export function PaymentSection({
 
   return (
     <div className="flex w-full flex-col gap-6">
-      <div className="rounded-lg border border-gray-200 p-4">
-        <p className="text-sm text-gray-500">
+      <div className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Ce mois-ci ({formatMonthLabel(currentMonthISO)})
         </p>
         {currentPayment ? (
-          <div className="mt-2 flex items-center gap-2 text-green-600">
+          <div className="mt-2 flex items-center gap-2 text-green-600 dark:text-green-400">
             <CheckCircle2 size={20} aria-hidden />
             <span className="font-medium">
               Payé le {formatDate(currentPayment.date_paiement)}
@@ -79,7 +83,32 @@ export function PaymentSection({
           </div>
         ) : (
           <div className="mt-3 flex flex-col gap-3">
-            <p className="text-sm text-gray-600">
+            {dueStatus && (
+              <div
+                className={`flex items-center gap-2 ${
+                  dueStatus.kind === "overdue"
+                    ? "text-red-600 dark:text-red-400"
+                    : dueStatus.kind === "due_today"
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-gray-700 dark:text-gray-200"
+                }`}
+              >
+                {dueStatus.kind === "overdue" ? (
+                  <TriangleAlert size={18} aria-hidden />
+                ) : (
+                  <Clock size={18} aria-hidden />
+                )}
+                <span className="font-medium">
+                  {dueStatus.kind === "overdue" && (
+                    <span className="mr-1 rounded-full bg-red-50 px-2 py-0.5 text-xs font-bold text-red-600 dark:bg-red-500/15 dark:text-red-400">
+                      -{dueStatus.days}
+                    </span>
+                  )}
+                  {formatDueStatus(dueStatus)}
+                </span>
+              </div>
+            )}
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Montant attendu : {formatAmount(montantMensuel)}
             </p>
             <form action={formAction}>
@@ -99,7 +128,7 @@ export function PaymentSection({
         <button
           type="button"
           onClick={() => setShowCustom((value) => !value)}
-          className="text-sm font-medium text-brand hover:underline"
+          className="text-sm font-medium text-brand hover:underline dark:text-brand-light"
         >
           {showCustom
             ? "Annuler"
@@ -108,12 +137,12 @@ export function PaymentSection({
         {showCustom && (
           <form
             action={formAction}
-            className="mt-3 flex flex-col gap-3 rounded-lg border border-gray-200 p-4"
+            className="mt-3 flex flex-col gap-3 rounded-lg border border-gray-200 p-4 dark:border-gray-700"
           >
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="mois"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 Mois
               </label>
@@ -122,13 +151,13 @@ export function PaymentSection({
                 name="mois"
                 type="month"
                 required
-                className="rounded-lg border border-gray-300 px-4 py-3 text-base"
+                className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
               />
             </div>
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="date_paiement"
-                className="text-sm font-medium text-gray-700"
+                className="text-sm font-medium text-gray-700 dark:text-gray-200"
               >
                 Date du paiement
               </label>
@@ -138,7 +167,7 @@ export function PaymentSection({
                 type="date"
                 required
                 defaultValue={todayISO()}
-                className="rounded-lg border border-gray-300 px-4 py-3 text-base"
+                className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
               />
             </div>
             <SubmitButton
@@ -151,11 +180,11 @@ export function PaymentSection({
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500">
+        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
           Historique
         </p>
         {history.length === 0 ? (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Aucun paiement enregistré pour l&apos;instant.
           </p>
         ) : (
@@ -163,12 +192,12 @@ export function PaymentSection({
             {history.map((payment) => (
               <li
                 key={payment.id}
-                className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2"
+                className="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2 dark:border-gray-700"
               >
                 <span className="font-medium capitalize">
                   {formatMonthLabel(payment.mois)}
                 </span>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-gray-500 dark:text-gray-400">
                   {formatDate(payment.date_paiement)}
                 </span>
               </li>

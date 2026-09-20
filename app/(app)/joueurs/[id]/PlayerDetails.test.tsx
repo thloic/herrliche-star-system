@@ -8,7 +8,6 @@ const player: Player = {
   photo_path: null,
   nom_prenom: "AGBETOKA Kodjo Kevin",
   date_naissance: "2014-05-12",
-  lieu_naissance: "Lomé",
   telephone: null,
   adresse: null,
   parent_nom: "AGBETOKA Kossi",
@@ -22,7 +21,6 @@ describe("PlayerDetails", () => {
 
     expect(screen.getByText("AGBETOKA Kodjo Kevin")).toBeInTheDocument();
     expect(screen.getByText("12 mai 2014")).toBeInTheDocument();
-    expect(screen.getByText("Lomé")).toBeInTheDocument();
     expect(screen.getByText("AGBETOKA Kossi")).toBeInTheDocument();
     expect(screen.getByText("90875244")).toBeInTheDocument();
   });

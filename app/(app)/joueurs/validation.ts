@@ -1,14 +1,15 @@
 export type PlayerFormInput = {
   nom_prenom: string;
   date_naissance: string;
-  lieu_naissance: string;
   telephone: string;
   adresse: string;
   parent_nom: string;
   parent_telephone: string;
 };
 
-export type PlayerFormErrors = Partial<Record<keyof PlayerFormInput, string>>;
+export type PlayerFormErrors = Partial<
+  Record<keyof PlayerFormInput | "photo", string>
+>;
 
 export function validatePlayerInput(
   input: PlayerFormInput,
@@ -23,10 +24,6 @@ export function validatePlayerInput(
     errors.date_naissance = "La date de naissance est requise.";
   } else if (Number.isNaN(Date.parse(input.date_naissance))) {
     errors.date_naissance = "Date de naissance invalide.";
-  }
-
-  if (!input.lieu_naissance.trim()) {
-    errors.lieu_naissance = "Le lieu de naissance est requis.";
   }
 
   if (!input.parent_nom.trim()) {

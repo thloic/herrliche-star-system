@@ -33,6 +33,7 @@ export async function markPaid(
   }
 
   revalidatePath(`/joueurs/${playerId}`);
+  revalidatePath("/joueurs");
   revalidatePath("/dashboard");
   return { success: true };
 }

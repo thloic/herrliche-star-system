@@ -16,10 +16,10 @@ export default function Error({
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
-      <AlertTriangle size={32} className="text-red-600" aria-hidden />
+      <AlertTriangle size={32} className="text-red-600 dark:text-red-400" aria-hidden />
       <div>
         <p className="font-semibold">Une erreur est survenue.</p>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           Vérifie ta connexion et réessaie. Si ça persiste, redémarre
           l&apos;appli.
         </p>

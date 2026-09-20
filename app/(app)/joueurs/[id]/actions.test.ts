@@ -54,7 +54,7 @@ describe("markPaid", () => {
     );
   });
 
-  it("revalide la fiche joueur et le dashboard après succès", async () => {
+  it("revalide la fiche joueur, la liste et le dashboard après succès", async () => {
     const result = await markPaid(
       "player-1",
       undefined,
@@ -62,6 +62,7 @@ describe("markPaid", () => {
     );
 
     expect(revalidatePath).toHaveBeenCalledWith("/joueurs/player-1");
+    expect(revalidatePath).toHaveBeenCalledWith("/joueurs");
     expect(revalidatePath).toHaveBeenCalledWith("/dashboard");
     expect(result?.success).toBe(true);
   });

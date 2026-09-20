@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeDashboardStats } from "./dashboard";
+import { computeDashboardStats, computeMonthlyCollections } from "./dashboard";
 import type { Payment, Player } from "./types";
 
 function player(overrides: Partial<Player> = {}): Player {
@@ -8,7 +8,6 @@ function player(overrides: Partial<Player> = {}): Player {
     photo_path: null,
     nom_prenom: "Joueur",
     date_naissance: "2014-01-01",
-    lieu_naissance: "Lomé",
     telephone: null,
     adresse: null,
     parent_nom: "Parent",
@@ -81,5 +80,31 @@ describe("computeDashboardStats", () => {
 
     expect(stats.paidCount).toBe(0);
     expect(stats.unpaidPlayers.map((p) => p.id)).toEqual(["p1"]);
+  });
+});
+
+describe("computeMonthlyCollections", () => {
+  it("agrège le nombre de paiements et le montant collecté par mois", () => {
+    const payments = [
+      payment({ player_id: "p1", mois: "2026-07-01" }),
+      payment({ player_id: "p2", mois: "2026-07-01" }),
+      payment({ player_id: "p1", mois: "2026-08-01" }),
+    ];
+
+    const result = computeMonthlyCollections(
+      payments,
+      ["2026-07-01", "2026-08-01", "2026-09-01"],
+      5000,
+    );
+
+    expect(result).toEqual([
+      { mois: "2026-07-01", paidCount: 2, collected: 10000 },
+      { mois: "2026-08-01", paidCount: 1, collected: 5000 },
+      { mois: "2026-09-01", paidCount: 0, collected: 0 },
+    ]);
+  });
+
+  it("renvoie un tableau vide pour une liste de mois vide", () => {
+    expect(computeMonthlyCollections([], [], 5000)).toEqual([]);
   });
 });

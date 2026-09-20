@@ -4,7 +4,7 @@ export function Spinner() {
       <div
         role="status"
         aria-label="Chargement"
-        className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-brand"
+        className="h-8 w-8 animate-spin rounded-full border-2 border-gray-200 border-t-brand dark:border-gray-700 dark:border-t-brand-light"
       />
     </div>
   );

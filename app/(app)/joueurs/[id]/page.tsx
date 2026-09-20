@@ -1,7 +1,14 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getSignedPhotoUrls } from "@/lib/players";
-import { currentMonthStart, findPaymentForMonth } from "@/lib/payments";
+import {
+  computeAnchorDay,
+  computeDueStatus,
+  currentMonthStart,
+  dueDateForMonth,
+  findPaymentForMonth,
+  todayISO,
+} from "@/lib/payments";
 import type { Payment, Player, Settings } from "@/lib/types";
 import { BackLink } from "../BackLink";
 import { PlayerDetails } from "./PlayerDetails";
@@ -40,6 +47,18 @@ export default async function JoueurPage(props: PageProps<"/joueurs/[id]">) {
   const settings = settingsData as Settings | null;
   const currentMonthISO = currentMonthStart();
   const currentPayment = findPaymentForMonth(payments, currentMonthISO);
+  const dueStatus = currentPayment
+    ? null
+    : computeDueStatus(
+        dueDateForMonth(
+          computeAnchorDay(
+            payments.filter((p) => p.mois < currentMonthISO),
+            player.created_at,
+          ),
+          currentMonthISO,
+        ),
+        todayISO(),
+      );
 
   return (
     <div className="flex flex-col gap-8">
@@ -50,6 +69,7 @@ export default async function JoueurPage(props: PageProps<"/joueurs/[id]">) {
         playerId={player.id}
         currentMonthISO={currentMonthISO}
         currentPayment={currentPayment}
+        dueStatus={dueStatus}
         montantMensuel={settings?.montant_mensuel ?? 0}
         history={payments}
       />

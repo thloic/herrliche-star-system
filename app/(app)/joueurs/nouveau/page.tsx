@@ -1,5 +1,6 @@
 import { BackLink } from "../BackLink";
-import { PlayerForm } from "./PlayerForm";
+import { PlayerForm } from "../PlayerForm";
+import { createPlayer } from "../actions";
 
 export default function NouveauJoueurPage() {
   return (
@@ -8,7 +9,7 @@ export default function NouveauJoueurPage() {
         <BackLink />
       </div>
       <h1 className="text-xl font-bold">Inscrire un enfant</h1>
-      <PlayerForm />
+      <PlayerForm mode="create" action={createPlayer} />
     </div>
   );
 }

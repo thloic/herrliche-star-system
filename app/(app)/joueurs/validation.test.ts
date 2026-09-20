@@ -5,7 +5,6 @@ function validInput(overrides: Partial<PlayerFormInput> = {}): PlayerFormInput {
   return {
     nom_prenom: "AGBETOKA Kodjo Kevin",
     date_naissance: "2014-05-12",
-    lieu_naissance: "Lomé",
     telephone: "90875243",
     adresse: "Amadahome",
     parent_nom: "AGBETOKA Kossi",
@@ -37,12 +36,6 @@ describe("validatePlayerInput", () => {
     expect(
       validatePlayerInput(validInput({ date_naissance: "pas une date" }))
         .date_naissance,
-    ).toBeDefined();
-  });
-
-  it("exige le lieu de naissance", () => {
-    expect(
-      validatePlayerInput(validInput({ lieu_naissance: "" })).lieu_naissance,
     ).toBeDefined();
   });
 

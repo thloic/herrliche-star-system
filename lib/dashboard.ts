@@ -33,3 +33,26 @@ export function computeDashboardStats(
     unpaidPlayers,
   };
 }
+
+export type MonthlyCollection = {
+  mois: string;
+  paidCount: number;
+  collected: number;
+};
+
+// Approximation assumée (cohérente avec computeDashboardStats) : le montant
+// mensuel peut avoir changé depuis un mois passé, on ne stocke pas le montant
+// réellement payé par transaction — on applique le montant actuel à
+// l'historique. Suffisant pour une tendance visuelle, pas un livre comptable.
+export function computeMonthlyCollections(
+  allPayments: Payment[],
+  months: string[],
+  montantMensuel: number,
+): MonthlyCollection[] {
+  return months.map((mois) => {
+    const paidCount = allPayments.filter(
+      (payment) => payment.mois === mois,
+    ).length;
+    return { mois, paidCount, collected: paidCount * montantMensuel };
+  });
+}

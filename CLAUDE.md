@@ -209,8 +209,123 @@ create policy "authenticated full access" on settings
 **Avancement : les 7 phases du plan initial sont terminées** (Setup, Auth
 coach, Fiche joueur, Mensualités, Dashboard, PWA, Finitions). Connexion
 vérifiée en conditions réelles par l'utilisateur. Design system appliqué (voir
-`docs/DESIGN.md`). L'appli couvre le scope du cadrage initial — la suite
-(nouvelles features, ajustements) se fera au fil des demandes.
+`docs/DESIGN.md`).
+
+## Ajustements post-Plan 2
+
+- **Lieu de naissance retiré** de la fiche joueur (formulaire, affichage,
+  colonne DB — migration `0003_drop_lieu_naissance.sql`, **à exécuter par
+  l'utilisateur**). La 2e ligne de la liste des joueurs affiche maintenant la
+  date de naissance au lieu du lieu de naissance.
+- **Photo obligatoire à l'inscription** (validée aussi côté serveur, pas
+  seulement `required` côté navigateur) — reste optionnelle en modification
+  puisque le joueur en a déjà une.
+- **Dashboard** : le sélecteur de mois est un `<input type="month">` natif
+  (n'importe quel mois, pas seulement les 12 derniers dans une liste) — les 4
+  cartes + la liste "à relancer/n'ont pas payé" se recalculent pour le mois
+  choisi via `?mois=YYYY-MM-01`. Le mini graphique de tendance reste
+  indépendant (toujours 12 mois glissants).
+- **Réglages** redessiné : chaque section (Montant, Apparence, Accès rapide)
+  dans une carte avec icône, cohérent avec le style des cartes du dashboard.
+- **Bug corrigé** : hydratation React sur `<html data-theme>` — le script
+  bloquant du thème pose l'attribut avant que React n'hydrate, il faut
+  `suppressHydrationWarning` sur `<html>` (le correctif documenté par React
+  pour ce cas précis, pas un contournement).
+
+## Plan 2 — Liste mobile, échéances, thème, PIN
+
+**Terminé** (les 5 étapes + un ajout hors-plan). Un deuxième plan avait été
+validé pour enrichir l'appli au-delà du cadrage initial, dans l'ordre :
+(1) tableau joueurs mobile + menu Voir/Modifier/Supprimer, (2) tags de
+paiement avec échéance, (3) thème clair/sombre, (4) PIN d'accès rapide,
+(5) vérifications finales — plus un ajout demandé en cours de route : mini
+graphique du montant collecté par mois sur le dashboard, avec période
+3/6/12 mois. **Fait dans ce worktree (main)** — un autre worktree
+(`../herrliche-stars-joueurs-pin`, branche `feat/joueurs-reglages-pin`) avait
+commencé le même chantier en parallèle sur une base plus ancienne (avant
+PWA/finitions) ; à considérer comme obsolète, sauf récupération explicite de
+code utile.
+
+**⚠️ Migrations en attente** — je n'ai pas d'accès direct à la base depuis cet
+environnement, à exécuter dans l'éditeur SQL Supabase :
+- `supabase/migrations/0002_pin_locks.sql` — sans elle, activer un code PIN
+  dans Réglages échoue.
+- `supabase/migrations/0003_drop_lieu_naissance.sql` — sans elle, inscrire un
+  nouvel enfant échoue (le formulaire n'envoie plus `lieu_naissance`, encore
+  `not null` en base tant que la migration n'est pas passée).
+
+Mini graphique dashboard : `lib/payments.ts` (`lastNMonths`,
+`formatShortAmount`, `shortMonthLabel`), `lib/dashboard.ts`
+(`computeMonthlyCollections`), `MonthlyChart` (barres simples, valeurs
+affichées directement sur chaque barre plutôt qu'un axe ou un survol — plus
+lisible pour un coach non technique sur téléphone, où le survol n'existe pas
+vraiment). Skill `dataviz` suivi : une seule teinte de marque pour une série
+unique (pas de palette catégorielle à valider), pas de double axe. Même
+approximation que le reste du dashboard : le montant historique est calculé
+avec le tarif *actuel*, pas un montant réellement encaissé à l'époque (le
+schéma ne stocke pas de montant par paiement) — cohérent avec l'existant, pas
+une nouvelle limite introduite par le graphique.
+
+Vérifié en conditions réelles (serveur dev) : toutes les routes protégées
+redirigent vers `/login` sans session, `hs_device_id` posé dès la première
+requête, manifest/service worker toujours servis après tous ces changements.
+Pas de compte coach ni de session réelle disponible dans cet environnement
+pour cliquer à travers le flux PIN/thème complet — à valider par
+l'utilisateur.
+
+**Décision clé (échéance de paiement)** : pas de jour d'échéance commun
+réglable dans Réglages. L'échéance est **individuelle par enfant**, calculée
+à partir du jour du mois de son **dernier paiement** (ex. payé le 8 le mois
+dernier → échéance le 8 ce mois-ci) ; si l'enfant n'a jamais payé, on utilise
+le jour d'inscription (`created_at`) comme ancre. Un jour absent du mois
+courant (ex. 31 en février) est ramené au dernier jour du mois.
+
+Phase 4 (PIN) : accès rapide par code à 6 chiffres, **par appareil**
+(`hs_device_id`, cookie httpOnly longue durée posé par `proxy.ts`), table
+`pin_locks` (migration `0002_pin_locks.sql`, RLS `auth.uid() = user_id` — **à
+exécuter par l'utilisateur**, je n'ai pas d'accès direct à la base). Hash
+scrypt + comparaison `timingSafeEqual` (`lib/pin.ts`, Node natif, pas de
+dépendance ajoutée), jamais de PIN en clair stocké. Le verrou est posé **côté
+serveur** dans `(app)/layout.tsx` : si l'appareil a un PIN configuré et pas de
+cookie `hs_unlocked` valide, `{children}` n'est ni récupéré ni rendu —
+`PinUnlockScreen` s'affiche à la place (pas un simple overlay qui masquerait
+des données déjà chargées). Blocage 5 minutes après 5 essais échoués. "PIN
+oublié" déconnecte et supprime le PIN de cet appareil (`forgotPin`), obligeant
+une reconnexion complète par mot de passe. Modifier/désactiver le PIN exige de
+resaisir le code actuel. Réglages : activer/modifier/désactiver + bouton
+"Verrouiller maintenant" (`app/(app)/parametres/PinSettings.tsx`).
+
+Phase 3 (thème) : clair/sombre/système, préférence en `localStorage`
+(`lib/theme.ts`, `app/ThemeProvider.tsx`), appliquée via un attribut
+`data-theme` sur `<html>` + variante Tailwind custom
+(`@custom-variant dark (&:where([data-theme="dark"], ...))` dans
+`globals.css` — pas la stratégie media-query par défaut, puisqu'un choix
+explicite doit pouvoir contredire l'OS). Script bloquant dans `<head>`
+(`getThemeInitScript`) pour éviter le flash au chargement. Toutes les couleurs
+neutres de l'appli ont une variante `dark:` (grep-vérifié) ; le bleu/orange du
+club restent identiques dans les deux thèmes. Sonner (`ToasterWithTheme`) suit
+le thème résolu. Écran de login volontairement non concerné (couleur de
+marque fixe, voir docs/DESIGN.md).
+
+Phase 2 (échéances) : `lib/payments.ts` (`computeAnchorDay`, `dueDateForMonth`,
+`computeDueStatus`, `formatDueStatus`). Le tag de statut devient cliquable
+(`StatusTag` accepte `onClick`, devient un `<button>`) et ouvre
+`PaymentStatusPanel` (payé → date ; sinon → "à payer dans N jours" / "à payer
+aujourd'hui" / badge rouge "-N" + "N jours de retard", puis bouton
+"Enregistrer le paiement" qui appelle `markPaid` directement, sans formulaire
+— revalidation `/joueurs` ajoutée à cette action). Même logique reprise sur la
+fiche joueur (`PaymentSection`) pour rester cohérent entre liste et détail.
+
+Phase 1 (tableau joueurs mobile) : `PlayerRow` (photo+nom sur le composant,
+infos secondaires sur une 2e ligne, jamais de scroll horizontal — pas de
+`truncate`, `min-w-0` + wrap naturel), `StatusTag` (Payé=vert, En
+attente=ambre — le rouge reste réservé au retard réel, Phase 2), `RowMenu`
+(Voir/Modifier/Supprimer), `DeletePlayerDialog` (confirmation, mentionne la
+suppression en cascade de l'historique — déjà garantie côté DB via `on delete
+cascade`), filtres Tous/Payés/En attente, mois affiché au-dessus du tableau.
+`PlayerForm` généralisé création/édition (`mode: "create" | "edit"`), nouvelle
+route `/joueurs/[id]/modifier`. `updatePlayer`/`deletePlayer` dans
+`joueurs/actions.ts` (suppression de la photo Storage en best-effort).
 
 Phase 7 : contenu recentré à 480px max sur desktop (nav, header, main) —
 mobile reste la cible, desktop un bonus, mais plus rien ne s'étire de façon

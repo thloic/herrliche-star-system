@@ -37,7 +37,7 @@ export function SettingsForm({ montantMensuel }: { montantMensuel: number }) {
       <div className="flex flex-col gap-1">
         <label
           htmlFor="montant_mensuel"
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 dark:text-gray-200"
         >
           Montant mensuel (F CFA)
         </label>
@@ -49,7 +49,7 @@ export function SettingsForm({ montantMensuel }: { montantMensuel: number }) {
           step="1"
           defaultValue={montantMensuel}
           required
-          className="rounded-lg border border-gray-300 px-4 py-3 text-base"
+          className="rounded-lg border border-gray-300 bg-white px-4 py-3 text-base text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
         />
       </div>
       <SubmitButton />

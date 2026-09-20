@@ -1,15 +1,27 @@
 @import "tailwindcss";
 
+/* Le thème (clair/sombre/système) est piloté par data-theme sur <html>,
+   posé avant l'hydratation par un script inline (voir app/layout.tsx) pour
+   éviter le flash. Pas de media query prefers-color-scheme ici : "système"
+   est résolu en JS et se traduit toujours par data-theme="light"|"dark". */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 :root {
   --background: #ffffff;
   --foreground: #14181f;
 
-  /* Design system Herrliche Stars — voir docs/DESIGN.md */
+  /* Design system Herrliche Stars — voir docs/DESIGN.md. Le bleu/orange du
+     club restent identiques dans les deux thèmes (charte de marque). */
   --brand: #1b2a6b; /* Bleu encre — marque */
   --brand-dark: #12204f;
   --brand-light: #3d4f9e;
   --accent: #ff6b1a; /* Orange terrain — actions, montants */
   --accent-dark: #e85a0a;
+}
+
+[data-theme="dark"] {
+  --background: #0f1420;
+  --foreground: #e6e9f0;
 }
 
 @theme inline {

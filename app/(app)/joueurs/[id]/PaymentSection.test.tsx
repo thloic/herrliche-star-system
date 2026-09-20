@@ -11,6 +11,7 @@ describe("PaymentSection", () => {
         playerId="p1"
         currentMonthISO="2026-09-01"
         currentPayment={undefined}
+        dueStatus={{ kind: "due_in", days: 5, dueDateISO: "2026-09-10" }}
         montantMensuel={5000}
         history={[]}
       />,
@@ -37,6 +38,7 @@ describe("PaymentSection", () => {
         playerId="p1"
         currentMonthISO="2026-09-01"
         currentPayment={currentPayment}
+        dueStatus={null}
         montantMensuel={5000}
         history={[currentPayment]}
       />,
@@ -48,12 +50,52 @@ describe("PaymentSection", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("affiche l'échéance à venir, du jour, ou en retard", () => {
+    const { rerender } = render(
+      <PaymentSection
+        playerId="p1"
+        currentMonthISO="2026-09-01"
+        currentPayment={undefined}
+        dueStatus={{ kind: "due_in", days: 5, dueDateISO: "2026-09-10" }}
+        montantMensuel={5000}
+        history={[]}
+      />,
+    );
+    expect(screen.getByText("À payer dans 5 jours")).toBeInTheDocument();
+
+    rerender(
+      <PaymentSection
+        playerId="p1"
+        currentMonthISO="2026-09-01"
+        currentPayment={undefined}
+        dueStatus={{ kind: "due_today", dueDateISO: "2026-09-05" }}
+        montantMensuel={5000}
+        history={[]}
+      />,
+    );
+    expect(screen.getByText("À payer aujourd'hui")).toBeInTheDocument();
+
+    rerender(
+      <PaymentSection
+        playerId="p1"
+        currentMonthISO="2026-09-01"
+        currentPayment={undefined}
+        dueStatus={{ kind: "overdue", days: 3, dueDateISO: "2026-09-02" }}
+        montantMensuel={5000}
+        history={[]}
+      />,
+    );
+    expect(screen.getByText("3 jours de retard")).toBeInTheDocument();
+    expect(screen.getByText("-3")).toBeInTheDocument();
+  });
+
   it("affiche/masque le formulaire pour un autre mois au clic", async () => {
     render(
       <PaymentSection
         playerId="p1"
         currentMonthISO="2026-09-01"
         currentPayment={undefined}
+        dueStatus={{ kind: "due_in", days: 5, dueDateISO: "2026-09-10" }}
         montantMensuel={5000}
         history={[]}
       />,
@@ -76,6 +118,7 @@ describe("PaymentSection", () => {
         playerId="p1"
         currentMonthISO="2026-09-01"
         currentPayment={undefined}
+        dueStatus={{ kind: "due_in", days: 5, dueDateISO: "2026-09-10" }}
         montantMensuel={5000}
         history={[]}
       />,
@@ -89,6 +132,7 @@ describe("PaymentSection", () => {
         playerId="p1"
         currentMonthISO="2026-09-01"
         currentPayment={undefined}
+        dueStatus={{ kind: "due_in", days: 5, dueDateISO: "2026-09-10" }}
         montantMensuel={5000}
         history={[
           {

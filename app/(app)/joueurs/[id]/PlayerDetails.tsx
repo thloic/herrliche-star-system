@@ -12,7 +12,7 @@ function formatDate(iso: string) {
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col">
-      <dt className="text-sm text-gray-500">{label}</dt>
+      <dt className="text-sm text-gray-500 dark:text-gray-400">{label}</dt>
       <dd className="text-base">{value}</dd>
     </div>
   );
@@ -35,7 +35,7 @@ export function PlayerDetails({
           className="h-32 w-32 rounded-full object-cover"
         />
       ) : (
-        <span className="flex h-32 w-32 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+        <span className="flex h-32 w-32 items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500">
           <UserRound size={48} aria-hidden />
         </span>
       )}
@@ -47,7 +47,6 @@ export function PlayerDetails({
           label="Date de naissance"
           value={formatDate(player.date_naissance)}
         />
-        <Info label="Lieu de naissance" value={player.lieu_naissance} />
         <Info label="Téléphone" value={player.telephone || "—"} />
         <Info label="Résidence" value={player.adresse || "—"} />
         <Info label="Parent ou tuteur" value={player.parent_nom} />

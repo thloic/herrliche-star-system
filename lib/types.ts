@@ -3,7 +3,6 @@ export type Player = {
   photo_path: string | null;
   nom_prenom: string;
   date_naissance: string; // ISO (YYYY-MM-DD)
-  lieu_naissance: string;
   telephone: string | null;
   adresse: string | null;
   parent_nom: string;
@@ -22,4 +21,15 @@ export type Payment = {
 export type Settings = {
   id: number;
   montant_mensuel: number;
+};
+
+export type PinLock = {
+  id: string;
+  user_id: string;
+  device_id: string;
+  pin_hash: string;
+  failed_attempts: number;
+  locked_until: string | null;
+  created_at: string;
+  updated_at: string;
 };

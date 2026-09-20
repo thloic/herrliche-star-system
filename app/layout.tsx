@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Geist_Mono } from "next/font/google";
-import { Toaster } from "sonner";
+import { getThemeInitScript } from "@/lib/theme";
+import { ThemeProvider } from "./ThemeProvider";
+import { ToasterWithTheme } from "./ToasterWithTheme";
 import { ServiceWorkerRegister } from "./ServiceWorkerRegister";
 import "./globals.css";
 
@@ -35,11 +37,23 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       className={`${plusJakartaSans.variable} ${geistMono.variable} h-full antialiased`}
+      // Le script bloquant ci-dessous pose data-theme sur <html> avant que
+      // React n'hydrate — attendu, voir lib/theme.ts. Sans ce
+      // suppressHydrationWarning, React signale un faux mismatch sur cet
+      // attribut à chaque chargement.
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
-        {children}
-        <Toaster position="top-center" richColors closeButton />
-        <ServiceWorkerRegister />
+      <head>
+        {/* Pose data-theme avant le premier paint pour éviter un flash du
+            mauvais thème (voir lib/theme.ts). */}
+        <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+      </head>
+      <body className="min-h-full flex flex-col bg-background text-foreground">
+        <ThemeProvider>
+          {children}
+          <ToasterWithTheme />
+          <ServiceWorkerRegister />
+        </ThemeProvider>
       </body>
     </html>
   );

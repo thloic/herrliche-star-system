@@ -14,7 +14,7 @@ export function BackLink({
   return (
     <Link
       href={href}
-      className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-brand"
+      className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-gray-500 transition-colors hover:text-brand dark:text-gray-400 dark:hover:text-brand-light"
     >
       <ChevronLeft size={18} aria-hidden />
       {label}
