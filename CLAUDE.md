@@ -213,6 +213,16 @@ vérifiée en conditions réelles par l'utilisateur. Design system appliqué (vo
 
 ## Ajustements post-Plan 2
 
+- **Graphique de comparaison** (`MonthlyComparisonChart`) : barres empilées
+  payés (vert, bas) / en attente (ambre, haut) par mois, période 3/6/12 mois
+  comme le graphique de tendance. `computeMonthlyComparison` exclut les
+  enfants pas encore inscrits à l'époque d'un mois passé (via `created_at`),
+  pour ne pas les compter comme "en attente" avant leur inscription.
+- **Modal d'installation Android** (`InstallPrompt`, dans le layout racine) :
+  écoute `beforeinstallprompt` (Chrome/Edge Android uniquement — n'existe pas
+  sur iOS/Firefox, le composant n'affiche rien là-bas) et propose un vrai
+  bouton "Installer" plutôt que de compter sur le bandeau automatique de
+  Chrome, peu fiable/tardif. Un refus est mémorisé 7 jours (`localStorage`).
 - **Lieu de naissance retiré** de la fiche joueur (formulaire, affichage,
   colonne DB — migration `0003_drop_lieu_naissance.sql`, **à exécuter par
   l'utilisateur**). La 2e ligne de la liste des joueurs affiche maintenant la
